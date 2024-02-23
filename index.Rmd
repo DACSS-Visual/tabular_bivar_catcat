@@ -379,7 +379,7 @@ ___________
 What plot can you create for these data, on childhood lead poisoning in the counties of Massachusetts (except Norfolk)?
 
 ```{r}
-poison=rio::import("highlysig_leadper1000_children.xlsx")
+poison=rio::import("https://github.com/DACSS-Visual/tabular_bivar_catcat/raw/main/highlysig_leadper1000_children.xlsx")
 head(poison)
 ```
 
