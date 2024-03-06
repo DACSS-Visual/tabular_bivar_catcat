@@ -171,8 +171,11 @@ barStacked + labs(fill="precinct") + theme_minimal()
 
 _____
 
+
 [Go to table of contents.](#TOC)
+
 ________________
+
 
 <a id='part2'></a>
 
