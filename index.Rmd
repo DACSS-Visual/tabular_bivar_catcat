@@ -106,6 +106,7 @@ ggplot(data=PrecDaytiDF,
              aes(x=daytime, y=counts)) + geom_bar(stat="identity")
 
 ```
+
 Now, include the _color fill_ in the aesthetics to color according to precinct using the **dodge** style
 
 ```{r basefillcount, eval=TRUE}
@@ -124,10 +125,15 @@ And compare it with :
 library(ggplot2)
 base2=ggplot(data=PrecDaytiDF,
              aes(x=daytime, y=pctCol, # % not counts
-                 fill=precint)) 
+                 fill=precint)) + theme_minimal()
 barDodge2= base2 +  geom_bar(stat="identity",
                             position ='dodge') 
-barDodge2
+barDodge2 + labs(title = "Do you live in north or west Seattle?",
+                 subtitle = "Crime situation by time of day (since 2008)",
+                 x="",
+                 y="share of all crimes",
+                 fill="Precinct",
+                 caption = "Source: Seattle, WA - Open Data Portal")
 ```
 Both may help highlight within-group differences.
 
@@ -186,8 +192,14 @@ barStacked3
 What else should be done? What is missing?
 
 ```{r}
-# change the legend title!
-barStacked3 + labs(fill="precinct") + theme_minimal()
+barStacked3 + theme_void() +
+    labs(title = "Do you live in north or west Seattle?",
+                 subtitle = "All Crimes share by time of day (since 2008)",
+                 x="bbb",
+                 y="",
+                 fill='Precinct',
+                 caption = "Source: Seattle, WA - Open Data Portal") 
+    
 ```
 
 _____
@@ -264,13 +276,13 @@ Remember points are better for positions, as their area or size differences are 
 
 ```{r facet, eval=TRUE}
 # as usual for barplot (less info than base1)
-base4 = ggplot(CrimeDayDF, aes(x = daytime, y = pctCol ) ) 
+base4 = ggplot(CrimeDayDF, aes(x = crime, y = pctCol ) ) 
 
 #the bars
 bars4  = base4 + geom_bar( stat = "identity" ) + theme_minimal()
 
 # bar per day time with 'facet'
-bars4 = bars4 + facet_grid(~ crime) 
+bars4 = bars4 + facet_grid(~ daytime) 
 
 bars4
 ```
@@ -278,10 +290,8 @@ bars4
 In the previous plot we respected the XY relationship, but this does not look like the crosstable; let's solve that via flipping:
 
 ```{r, eval=TRUE}
-# change x to our early Y
-base5 = ggplot(CrimeDayDF, aes(x = crime, y = pctCol ) ) 
-bars5  = base5 + geom_bar( stat = "identity" ) + theme_minimal()
-barsFacet = bars5 + facet_grid(~ daytime)  # X
+
+barsFacet = bars4 + facet_grid(~ daytime)  # X
 # trick
 barsFacet + coord_flip()
 ```
@@ -328,10 +338,10 @@ barsREFacet + theme(axis.text.y = element_text(size=7,angle = 20)) +
                                       scales::percent(round(pctCol,2)),"")),
                      nudge_y = 0.1,size=3) + 
            scale_y_continuous(labels = percent_format(accuracy = 1,suffix="")) +
-    labs(title= "You can not feel safe any time of the day",
-         subtitle = "Seattle, WA",
+    labs(title= "Crime by time of day in Seattle,WA",
+         subtitle = "All crimes since 2008",
          caption = "Seattle Crime Data - Official open data portal",
-         x="Crimes",y="%")
+         x="",y="%")
 
 ```
 
@@ -388,7 +398,7 @@ heatYllRd_rev = heatDefault +scale_fill_gradientn(colours = rev(colorspace::heat
 heatYllRd_rev
 ```
 
-Is the heatplot better than the barplot? Not really.
+Is the heatplot better than the facetted barplot? Not really.
 
 
 
