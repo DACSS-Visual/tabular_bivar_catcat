@@ -106,58 +106,79 @@ ggplot(data=PrecDaytiDF,
              aes(x=daytime, y=counts)) + geom_bar(stat="identity")
 
 ```
+Now, include the _color fill_ in the aesthetics to color according to precinct using the **dodge** style
 
-Now, let's show pctCol (y) by daytime (x), filled (colored) according to precinct using the **dodge** style:
+```{r basefillcount, eval=TRUE}
+
+base1=ggplot(data=PrecDaytiDF,
+             aes(x=daytime, y=counts,
+                 fill=precint)) # fill brings a legend
+barDodge1= base1 +  geom_bar(stat="identity",
+                            position ='dodge') 
+barDodge1 
+```
+
+And compare it with :
 
 ```{r base2, eval=TRUE}
 library(ggplot2)
-base1=ggplot(data=PrecDaytiDF,
-             aes(x=daytime, y=pctCol,
-                 fill=precint)) # fill brings a legend
-barDodge= base1 +  geom_bar(stat="identity",
+base2=ggplot(data=PrecDaytiDF,
+             aes(x=daytime, y=pctCol, # % not counts
+                 fill=precint)) 
+barDodge2= base2 +  geom_bar(stat="identity",
                             position ='dodge') 
-barDodge 
+barDodge2
 ```
+Both may help highlight within-group differences.
 
 
-The second is the **stack** style:
+Let's see the **stack** style next:
 
 ```{r, eval=TRUE}
 # same base1
-barStacked = base1 + geom_bar(stat = "identity",
+barStacked1 = base1 + geom_bar(stat = "identity",
                               position = 'stack')#default
-barStacked 
+barStacked1
 ```
 
-The stacked version will help more than the dodged one as it reveals better the values in the contingency table, so we continue with adding some elements:
+```{r, eval=TRUE}
+# same base2
+barStacked2 = base2 + geom_bar(stat = "identity",
+                              position = 'stack')#default
+barStacked2
+```
+
+The stacked version using counts will help you to highlight _whole-part_, while the one based on percents will _relative-contribution_. 
+
+The latter reveals better the values in the contingency table, so let's continue  adding some other elements:
 
 ```{r, eval=TRUE}
 library(scales)
-barStacked= barStacked + geom_text(size = 5,# check below:
+barStacked2= barStacked2 + geom_text(size = 5,# check below:
                              position = position_stack(vjust = 0.5),# center
                              aes(label=percent(pctCol,accuracy = 0.1)))# percent format
 
-barStacked = barStacked + scale_y_continuous(labels = scales::percent)
+barStacked2 = barStacked2 + scale_y_continuous(labels = scales::percent)
 
-barStacked
+barStacked2
 ```
 
 Since the precinct is nominal, and you see some marked differences along the rows, I can reorder its levels. Let me reorder the percents.
 
 ```{r, eval=TRUE}
 
-base1=ggplot(data=PrecDaytiDF, 
+base3=ggplot(data=PrecDaytiDF, 
              aes(x=daytime, y=pctCol,
                  fill=reorder(precint,pctCol))) 
 
-barStacked = base1 + geom_bar(stat = "identity",
+barStacked3 = base3 + geom_bar(stat = "identity",
                               position = 'stack')
-barStacked= barStacked + geom_text(size = 5,
+barStacked3= barStacked3 + geom_text(size = 5,
                              position = position_stack(vjust = 0.5),
                              aes(label=percent(pctCol,accuracy = 0.1)))
 
 
-barStacked
+barStacked3
 
 
 ```
@@ -166,7 +187,7 @@ What else should be done? What is missing?
 
 ```{r}
 # change the legend title!
-barStacked + labs(fill="precinct") + theme_minimal()
+barStacked3 + labs(fill="precinct") + theme_minimal()
 ```
 
 _____
@@ -210,15 +231,15 @@ Last time, we turn the contingency table into a stacked barplot, let's try again
 
 ```{r BADplot,eval=TRUE}
 # bad idea
-base2=ggplot(data=CrimeDayDF,
-             aes(x=daytime,y=pctCol,fill=crime))
-base2=base2 + geom_bar(stat = "identity", position = 'fill') + 
+ggplot(data=CrimeDayDF,
+             aes(x=daytime,y=pctCol,fill=crime)) + 
+    geom_bar(stat = "identity", position = 'fill') + 
         geom_text(size = 3, 
                   position = position_stack(vjust = 0.5),
-                  aes(label=percent(pctCol,accuracy = 0.1)))
-barStacked2 = base2 + scale_y_continuous(labels = scales::percent)
+                  aes(label=percent(pctCol,accuracy = 0.1)))+ 
+    scale_y_continuous(labels = scales::percent)
 
-barStacked2
+
 ```
 
 This plot will need a lot of work, so using the previous plots may not be a good strategy.  
@@ -227,9 +248,9 @@ A first option you may have is to reproduce the table, let's try point sizes:
 
 ```{r plotTable_gg, eval=TRUE}
 #new base
-base3 = ggplot(CrimeDayDF, aes(x=daytime,y=reorder(crime,pctCol))) 
+basePoints = ggplot(CrimeDayDF, aes(x=daytime,y=reorder(crime,pctCol))) 
 # plot value as point, size by value of percent
-tablePlot = base3 + geom_point(aes(size = pctCol*100)) 
+tablePlot = basePoints + geom_point(aes(size = pctCol*100)) 
 # add value of Percent as label
 tablePlot = tablePlot + geom_text(aes(label = percent(pctCol,
                                                       accuracy = 0.1,
@@ -246,23 +267,23 @@ Remember points are better for positions, as their area or size differences are 
 base4 = ggplot(CrimeDayDF, aes(x = daytime, y = pctCol ) ) 
 
 #the bars
-bars  = base4 + geom_bar( stat = "identity" ) + theme_minimal()
+bars4  = base4 + geom_bar( stat = "identity" ) + theme_minimal()
 
 # bar per day time with 'facet'
-barsFa = bars + facet_grid(~ crime) 
+bars4 = bars4 + facet_grid(~ crime) 
 
-barsFa
+bars4
 ```
 
 In the previous plot we respected the XY relationship, but this does not look like the crosstable; let's solve that via flipping:
 
 ```{r, eval=TRUE}
 # change x to our early Y
-base4 = ggplot(CrimeDayDF, aes(x = crime, y = pctCol ) ) 
-bars  = base4 + geom_bar( stat = "identity" ) + theme_minimal()
-barsFa = bars + facet_grid(~ daytime)  # X
+base5 = ggplot(CrimeDayDF, aes(x = crime, y = pctCol ) ) 
+bars5  = base5 + geom_bar( stat = "identity" ) + theme_minimal()
+barsFacet = bars5 + facet_grid(~ daytime)  # X
 # trick
-barsFa + coord_flip()
+barsFacet + coord_flip()
 ```
 
 
@@ -274,17 +295,17 @@ baseRE  = ggplot(CrimeDayDF,
                      y = pctCol ) ) + theme_minimal()
 
 barsRE = baseRE + geom_bar( stat = "identity" ) 
-barsREFa = barsRE + facet_grid( ~ daytime) 
-barsREFa= barsREFa + coord_flip() 
+barsREFacet = barsRE + facet_grid( ~ daytime) 
+barsREFacet= barsREFacet + coord_flip() 
 
 
-barsREFa
+barsREFacet
 ```
 
 Let's annotate:
 ```{r, eval=TRUE}
 
-barsREFa + theme(axis.text.y = element_text(size=4,angle = 20)) + 
+barsREFacet + theme(axis.text.y = element_text(size=4,angle = 20)) + 
            geom_text(aes(label=round(pctCol,2)),
                      nudge_y = 0.055)
 ```
@@ -292,7 +313,7 @@ barsREFa + theme(axis.text.y = element_text(size=4,angle = 20)) +
 Let's improve the annotation by dropping some texts:
 ```{r, eval=TRUE}
 
-barsREFa + theme(axis.text.y = element_text(size=7,angle = 20)) + 
+barsREFacet + theme(axis.text.y = element_text(size=7,angle = 20)) + 
            geom_text(aes(label=ifelse(pctCol>0.1,# condition to annotate
                                       round(pctCol,2),"")),
                      nudge_y = 0.1)
@@ -302,7 +323,7 @@ What about these labels?
 
 ```{r, eval=TRUE}
 
-barsREFa + theme(axis.text.y = element_text(size=7,angle = 20)) + 
+barsREFacet + theme(axis.text.y = element_text(size=7,angle = 20)) + 
            geom_text(aes(label=ifelse(pctCol>0.1,# condition to annotate
                                       scales::percent(round(pctCol,2)),"")),
                      nudge_y = 0.1,size=3) + 
