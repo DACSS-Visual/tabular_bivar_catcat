@@ -14,7 +14,7 @@ _____
 
 2. [Complex Tables](#part2)
 
-3. [LAB (next meeting).](#part3) 
+3. [Deliverable II (option 1)](#part3) 
 
 
 _____
@@ -78,7 +78,7 @@ library(magrittr) # for %>%
 
 The previous table shows you how the crimes that occur in a precinct are affected by the time they happen. So you need a plot that allows to highlight those differences across daytime.
 
-As you know, a table can not be plotted unless they are turned into a data frame:
+As you know, a table can not be plotted unless it is turned into a data frame:
 
 ```{r, eval=TRUE}
 #making a data frame from contingency table
@@ -97,7 +97,7 @@ PrecDaytiDF
 ```
 
 
-First, let's tell ggplot to show bars of _counts_ by by daytime (x):
+First, let's tell ggplot to show bars of _counts_ by _daytime_:
 
 
 ```{r base, eval=TRUE}
@@ -119,10 +119,9 @@ barDodge1= base1 +  geom_bar(stat="identity",
 barDodge1 
 ```
 
-And compare it with :
+And compare:
 
-```{r base2, eval=TRUE}
-library(ggplot2)
+```{r}
 base2=ggplot(data=PrecDaytiDF,
              aes(x=daytime, y=pctCol, # % not counts
                  fill=precint)) + theme_minimal()
@@ -135,6 +134,25 @@ barDodge2 + labs(title = "Do you live in north or west Seattle?",
                  fill="Precinct",
                  caption = "Source: Seattle, WA - Open Data Portal")
 ```
+If we changed the variables in the aesthetics:
+
+```{r base2, eval=TRUE}
+
+base3=ggplot(data=PrecDaytiDF,
+             aes(x=precint, y=pctCol, # % not counts
+                 fill=daytime)) + theme_minimal()
+barDodge3= base3 +  geom_bar(stat="identity",
+                            position ='dodge') 
+barDodge3 + labs(title = "It is still safe inj the mornings?",
+                 subtitle = "Crime situation by time of day (since 2008)",
+                 x="",
+                 y="share of all crimes",
+                 fill="Precinct",
+                 caption = "Source: Seattle, WA - Open Data Portal") + scale_fill_brewer(palette = 'Greys') + theme(plot.background = element_rect(fill = "lightblue",
+                                colour = "lightblue"))
+```
+
+
 Both may help highlight within-group differences.
 
 
@@ -184,8 +202,8 @@ barStacked3= barStacked3 + geom_text(size = 5,
                              aes(label=percent(pctCol,accuracy = 0.1)))
 
 
+barStacked3=barStacked3 + scale_fill_brewer(palette = 'Set1')
 barStacked3
-
 
 ```
 
@@ -409,15 +427,14 @@ ___________
 
 <a id='part3'></a>
 
-## LAB for THURSDAY: From numeric to ordinal via aggregation
+## Deliverable II (option 1)
 
-What plot can you create for these data, on childhood lead poisoning in the counties of Massachusetts (except Norfolk)?
-
+This link has data from this [website](https://www.mass.gov/lists/massachusetts-state-police-arrest-details), which informs about Massachusetts State Police arrest details.
 ```{r}
-poison=rio::import("https://github.com/DACSS-Visual/tabular_bivar_catcat/raw/main/data/highlysig_leadper1000_children.xlsx")
-head(poison)
+linkMass="https://github.com/DACSS-Visual/tabular_bivar_catcat/raw/refs/heads/main/data/MSP%20DFS%20Arrests%2019-20Q1.xlsx"
 ```
 
+Use the columns **Arrest Offense** and **Race** to make a visual. The excel file has the data in the first sheet, and the codes in the second.
 _____
 
 [Go to table of contents.](#TOC)
