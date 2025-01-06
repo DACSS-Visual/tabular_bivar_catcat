@@ -158,7 +158,7 @@ barDodge2_bad + labs(title = "Is it still safe in the mornings?",
                  subtitle = "Crime situation by time of day (since 2008)",
                  x="",
                  y="%",
-                 fill="Precinct",
+                 fill="Daytime",
                  caption = "Source: Seattle, WA - Open Data Portal") + scale_fill_brewer(palette = 'Greys') + theme(plot.background = element_rect(fill = "lightblue",
                                 colour = "lightblue"))
 ```
@@ -194,7 +194,7 @@ barDodge2_ok + labs(title = "Is it still safe in the mornings?",
                  subtitle = "Crime situation by time of day (since 2008)",
                  x="",
                  y="%",
-                 fill="Precinct",
+                 fill="Daytime",
                  caption = "Source: Seattle, WA - Open Data Portal") + scale_fill_brewer(palette = 'Greys') + theme(plot.background = element_rect(fill = "lightblue",
                                 colour = "black"))
 ```
@@ -216,6 +216,9 @@ barStacked_counts
 
 ```{r, eval=TRUE}
 # USING PERCENTS
+base1_pct=ggplot(data=PrecDaytiDF,
+             aes(x=daytime, y=pctCol,
+                 fill=precint)) # reordering
 barStacked_pcts = base1_pct + geom_bar(stat = "identity",
                               position = 'stack')#default
 barStacked_pcts
@@ -232,7 +235,7 @@ barStacked_pcts= barStacked_pcts + geom_text(size = 5,# check below:
 barStacked_pcts
 ```
 
-Since the precinct is nominal, and you see some marked differences along the rows, I can reorder its levels. Let me reorder the percents.
+Since the precinct is nominal, and you see some marked differences along the rows, I can reorder its levels. Let me reorder the percents as we did before, while also changing fill color:
 
 ```{r, eval=TRUE}
 
