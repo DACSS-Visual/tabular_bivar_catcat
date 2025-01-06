@@ -218,7 +218,7 @@ barStacked_counts
 # USING PERCENTS
 base1_pct=ggplot(data=PrecDaytiDF,
              aes(x=daytime, y=pctCol,
-                 fill=precint)) # reordering
+                 fill=precint)) 
 barStacked_pcts = base1_pct + geom_bar(stat = "identity",
                               position = 'stack')#default
 barStacked_pcts
@@ -243,22 +243,22 @@ base3=ggplot(data=PrecDaytiDF,
              aes(x=daytime, y=pctCol,
                  fill=reorder(precint,pctCol))) 
 
-barStacked3 = base3 + geom_bar(stat = "identity",
+barStacked_pcts_reordered = base3 + geom_bar(stat = "identity",
                               position = 'stack')
-barStacked3= barStacked3 + geom_text(size = 5,
+barStacked_pcts_reordered= barStacked_pcts_reordered + geom_text(size = 5,
                              position = position_stack(vjust = 0.5),
                              aes(label=paste0(pctCol,'%')))
 
 
-barStacked3=barStacked3 + scale_fill_brewer(palette = 'Set1')
-barStacked3
+barStacked_pcts_reordered=barStacked_pcts_reordered + scale_fill_brewer(palette = 'Set1')
+barStacked_pcts_reordered
 
 ```
 
 What else should be done? What is missing?
 
 ```{r}
-barStacked3 + theme_minimal() +
+barStacked_pcts_reordered + theme_minimal() +
     labs(title = "Stay away from the North and West",
                  subtitle = "All Crimes in Seattle since 2008",
                  x="",
